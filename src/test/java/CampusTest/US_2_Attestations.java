@@ -10,7 +10,7 @@ import static io.restassured.RestAssured.baseURI;
 public class US_2_Attestations {
 
     @BeforeClass
-    public void loginCampus() {
+    public void loginCampuss() {
 
         baseURI = "https://test.mersys.io/";
         Map<String, String> credential = new HashMap<>();
