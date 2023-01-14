@@ -28,7 +28,7 @@
         <version>7.4.0</version>
     </dependency>
 
-    <dependency>
+    <dependency> <!-- for assertions -->
         <groupId>org.hamcrest</groupId>
         <artifactId>hamcrest-all</artifactId>
         <version>1.3</version>
