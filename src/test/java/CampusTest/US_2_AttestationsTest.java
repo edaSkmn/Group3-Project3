@@ -15,17 +15,16 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
-public class US_1_PositionCategoriesTest {
+public class US_2_AttestationsTest {
 
     Cookies cookies;
-    String positionID;
-    String positionName;
-
+    String attestationID;
+    String attestationName;
 
     @BeforeClass
-    public void loginCampus() {
-        baseURI = "https://test.mersys.io/";
+    public void loginCampuss() {
 
+        baseURI = "https://test.mersys.io/";
         Map<String, String> credential = new HashMap<>();
         credential.put("username", "turkeyts");
         credential.put("password", "TechnoStudy123");
@@ -43,34 +42,29 @@ public class US_1_PositionCategoriesTest {
                         .statusCode(200)
                         .extract().response().getDetailedCookies()
         ;
-
     }
-
     public String getRandomName() {
-        return RandomStringUtils.randomAlphabetic(8);
-    }
-
-    public String getRandomCode() {
-        return RandomStringUtils.randomAlphabetic(3);
+        return RandomStringUtils.randomAlphabetic(7);
     }
 
 
     @Test
-    public void createPositionCategories() {
-        positionName = getRandomName();
+    public void createAttestations(){
 
-        US_1_PositionCategories position=new US_1_PositionCategories();
-        position.setName(positionName);
+        attestationName=getRandomName();
 
+        US_1_PositionCategories attestation=new US_1_PositionCategories();
+        attestation.setName(attestationName);
 
-        positionID=
+        attestationID=
                 given()
+
                         .cookies(cookies)
                         .contentType(ContentType.JSON)
-                        .body(position)
+                        .body(attestation)
 
                         .when()
-                        .post("school-service/api/position-category")
+                        .post("school-service/api/attestation")
 
                         .then()
                         .log().body()
@@ -78,96 +72,82 @@ public class US_1_PositionCategoriesTest {
                         .extract().jsonPath().getString("id")
         ;
     }
+    @Test(dependsOnMethods = "createAttestations", priority = 1)
+    public void createAttestationNegative(){
 
-    @Test(dependsOnMethods = "createPositionCategories", priority = 1)
-    public void createPositionCategoriesNegative() {
-
-        US_1_PositionCategories position=new US_1_PositionCategories();
-        position.setName(positionName);
-
+        US_1_PositionCategories attestation=new US_1_PositionCategories();
+        attestation.setName(attestationName);
 
         given()
                 .cookies(cookies)
                 .contentType(ContentType.JSON)
-                .body(position)
+                .body(attestation)
 
                 .when()
-                .post("school-service/api/position-category")
+                .post("school-service/api/attestation")
 
                 .then()
                 .log().body()
                 .statusCode(400)
                 .body("message", containsString("already exist"))
         ;
-
-
     }
+    @Test(dependsOnMethods = "createAttestations", priority = 2)
+    public void updateAttestation(){
 
-    @Test(dependsOnMethods = "createPositionCategories", priority = 2)
-    public void updatePositionCategories() {
+        attestationName=getRandomName();
 
-        positionName=getRandomName();
-
-        US_1_PositionCategories position=new US_1_PositionCategories();
-        position.setId(positionID);
-        position.setName(positionName);
-
-
+        US_1_PositionCategories attestation=new US_1_PositionCategories();
+        attestation.setName(attestationName);;
+        attestation.setId(attestationID);
 
         given()
                 .cookies(cookies)
                 .contentType(ContentType.JSON)
-                .body(position)
+                .body(attestation)
 
                 .when()
-                .put("school-service/api/position-category")
+                .put("school-service/api/attestation")
 
                 .then()
                 .log().body()
                 .statusCode(200)
-                .body("name", equalTo(positionName))
-
+                .body("name",equalTo(attestationName))
         ;
-
-
     }
-
-    @Test(dependsOnMethods = "updatePositionCategories")
-    public void deletePositionCategoriesById() {
+    @Test(dependsOnMethods = "updateAttestation")
+    public void deleteAttestationById(){
 
         given()
                 .cookies(cookies)
-                .pathParam("positionID", positionID)
+                .pathParam("attestationID",attestationID)
                 .log().uri()
 
                 .when()
-                .delete("school-service/api/position-category/{positionID}")
+                .delete("school-service/api/attestation/{attestationID}")
 
                 .then()
                 .log().body()
                 .statusCode(204)
-
         ;
-
-
     }
-
-    @Test(dependsOnMethods = "deletePositionCategoriesById")
-    public void deletePositionCategoriesByIdNegative() {
+    @Test(dependsOnMethods = "deleteAttestationById")
+    public void deleteAttestationByNegative(){
 
         given()
                 .cookies(cookies)
-                .pathParam("positionID", positionID)
+                .pathParam("attestationID",attestationID)
                 .log().uri()
+
                 .when()
-                .delete("school-service/api/position-category/{positionID}")
+                .delete("school-service/api/attestation/{attestationID}")
 
                 .then()
                 .log().body()
                 .statusCode(400)
-                .body("message", equalTo("PositionCategory not  found") )
+                .body("message",equalTo("attestation not found"))
         ;
-
     }
-
 }
+
+
